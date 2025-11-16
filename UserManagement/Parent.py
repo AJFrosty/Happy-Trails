@@ -1,13 +1,15 @@
 from UserManagement.User import User
 import DataManagement
+import datetime
 
 class Camper:
-    def __init__(self, name, age, dob, parentID, medicalInfo="N/A"):
-        self.name = name
-        self.age = age
-        self.dob = dob
-        self.parentID = parentID
-        self.medicalInfo = medicalInfo
+
+    def __init__(self, name, age, dob, parentId, medicalInfo="N/A"):
+        self.__name = name
+        self.__age = age
+        self.__dob = dob
+        self.__parentId = parentId
+        self.__medicalInfo = medicalInfo
 
     def getName(self):
         return self.__name
@@ -15,11 +17,11 @@ class Camper:
     def getAge(self):
         return self.__age
 
-    def getDOB(self):
+    def getDob(self):
         return self.__dob
 
-    def getParentID(self):
-        return self.__parentID
+    def getParentId(self):
+        return self.__parentId
 
     def getMedicalInfo(self):
         return self.__medicalInfo
@@ -33,14 +35,15 @@ class Camper:
             return
         self.__age = age
 
-    def setDOB(self, dob):
+    def setDob(self, dob):
         self.__dob = dob
 
-    def setParentID(self, parentID):
-        self.__parentID = parentID
+    def setParentId(self, parentId):
+        self.__parentId = parentId
 
     def setMedicalInfo(self, medicalInfo):
         self.__medicalInfo = medicalInfo
+
 
 class Parent(User):
     def __init__(self, id: str, name: str, password: str, role: str, fileManager: DataManagement, authenticated: bool):
@@ -60,17 +63,44 @@ class Parent(User):
             print("❌ You must be logged in to register a camper.")
             return
 
-        # Collect camper details
-        name = input("Enter Camper Name: ").strip()
-        age = input("Enter Age: ").strip()
-        dob = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
+        while True:
+            name = input("Enter Camper Name (First and Last): ").strip()
+            if len(name.split()) < 2:
+                print("❌ Please enter both first and last name.")
+            else:
+                break
+
+        while True:
+            try:
+                age = int(input("Enter Age (5-19): ").strip())
+                if age < 5 or age > 19:
+                    print("❌ Age must be between 5 and 19.")
+                else:
+                    break
+            except ValueError:
+                print("❌ Age must be a valid number.")
+
+        while True:
+            dob_input = input("Enter Date of Birth (YYYY-MM-DD): ").strip()
+            try:
+                dob = datetime.datetime.strptime(dob_input, "%Y-%m-%d").date()
+                today = datetime.date.today()
+                calculated_age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+                
+                if abs(calculated_age - age) > 1:
+                    print(f"⚠️ Age entered ({age}) does not match date of birth ({dob_input}). Please recheck.")
+                    continue
+                break
+            except ValueError:
+                print("❌ Invalid date format. Please use YYYY-MM-DD.")
+
         medicalInfo = input("Enter Medical Info (optional, press Enter to skip): ").strip() or "N/A"
 
-        camper = Camper(name, age, dob, self.getID(), medicalInfo)
-        # Save to camper.txt
-        record = f"{camper.getName()}:{camper.getAge()}:{camper.getDob()}:{camper.getParentID()}:{camper.getMedicalInfo()}\n"
+        camper = Camper(name, age, dob_input, self.getID(), medicalInfo)
 
+        record = f"{camper.getName()}:{camper.getAge()}:{camper.getDob()}:{camper.getParentId()}:{camper.getMedicalInfo()}\n"
         success = self.getFileManager().write("camper.txt", record, append=True)
+
         if success:
             print(f"✅ Camper '{name}' registered successfully.")
             self.logAction(f"Registered camper '{name}'")
