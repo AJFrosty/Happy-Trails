@@ -93,3 +93,13 @@ class DataManagement:
             except Exception as e:
                 print(f"❌ Export summary failed: {e}")
                 return False
+    
+    def createReport(self, sourceFilename, filteredLines):
+        dateStr = datetime.datetime.now().strftime("%m.%d.%y")
+        baseName = os.path.splitext(sourceFilename)[0]
+        reportName = f"{baseName}-{dateStr}.txt"
+
+        self.write(reportName, filteredLines, append=False)
+        print(f"📄 Report generated: {reportName}")
+
+        return reportName

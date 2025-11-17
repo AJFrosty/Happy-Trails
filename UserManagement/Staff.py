@@ -6,10 +6,10 @@ class Staff(User):
         super().__init__(id,name,password,role,fileManager, authenticated)
 
     def canCreate(self, roleToCreate: str) -> bool:
-        return roleToCreate == "Parent"
+        return roleToCreate == "Parent" or roleToCreate == "Camper"
 
     def canEdit(self, targetRole: str) -> bool:
-        return targetRole == "Parent"
+        return targetRole == "Parent" or targetRole == "Camper"
 
     def canDelete(self, targetRole: str) -> bool:
         return False

@@ -107,7 +107,6 @@ class Parent(User):
         else:
             print("❌ Failed to register camper. Check file permissions.")
 
-
     def showDashboard(self):
         print("\n--- PARENT DASHBOARD ---")
         print("1. Register New Camper")

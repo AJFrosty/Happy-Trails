@@ -66,7 +66,7 @@ class User:
 
         if success:
             print(f"✅ {roleToCreate} '{username}' created successfully with ID {newId}.")
-            self.logAction(f"Registered camper '{username}'")      
+            self.__fileManager.logAction(f"Registered camper '{username}'")      
         else:
             print("❌ Failed to create user. Check file permissions.")
 
@@ -83,7 +83,6 @@ class User:
     def showDashboard(self):
         print(f"Logged in as {self.__role}. No dashboard implemented.")
     
-
     #ALL THE GETTERS FOR ATTRIBUTES
     def getID(self): return self.__id
     def getName(self): return self.__name
@@ -91,11 +90,5 @@ class User:
     def getRole(self): return self.__role
     def getFileManager(self): return self.__fileManager
     def isAuthenticated(self): return self.__authenticated
-
-    #LOGGING
-    def logAction(self, action: str):
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        record = f"{self.getID()}:{self.getName()}:{action}:{timestamp}\n"
-        success = self.getFileManager().write("session.txt", record, append=True)
-        if not success:
-            print("⚠️ Failed to log session.")
+    
+    
