@@ -1,6 +1,1 @@
-PRT_0:john:Registered camper 'Taylor Swift':2025-11-12 11:00:55
-PRT_0:john:Registered camper 'Oliva Rodrigo':2025-11-12 11:02:03
-PRT_0:john:Registered camper 'Olivia Rodrigo':2025-11-12 11:06:21
-ADM_0:frosty:Registered camper 'taylor':2025-11-12 13:00:15
-STF_3:taylor:Registered camper 'allison':2025-11-12 13:01:29
-PRT_1:allison:Registered camper 'Ajante Fraser':2025-11-12 13:04:26
+ADM_0:frosty:Generated User Report (role=Admin):2025-11-19 11:40:46

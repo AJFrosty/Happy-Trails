@@ -45,6 +45,7 @@ class Administrator(User):
 
     def generateUserReport(self):
         lines = self.getFileManager().read("users.txt")
+
         print("\nFilter Users by:")
         print("1. Role")
         print("2. Username")
@@ -53,13 +54,30 @@ class Administrator(User):
         c = input("Choose filter: ")
 
         if c == "1":
-            role = input("Enter role (Admin/Staff/Parent): ").strip()
+            role = input("Enter role (Admin/Staff/Parent): ").strip().title()
+
+            if role not in ["Admin", "Staff", "Parent"]:
+                print("❌ Invalid role entered.")
+                return
+
             data = [l for l in lines if f":{role}:" in l]
+
+            if not data:
+                print(f"⚠️ No users found with role '{role}'. Report canceled.")
+                return
+
             action = f"Generated User Report (role={role})"
 
         elif c == "2":
             name = input("Enter username: ").strip()
+
+            #check username exists at all
+            if not any(f":{name}:" in l for l in lines):
+                print("❌ Username not found in system.")
+                return
+
             data = [l for l in lines if f":{name}:" in l]
+
             action = f"Generated User Report (username={name})"
 
         else:
@@ -71,6 +89,7 @@ class Administrator(User):
 
     def generateCamperReport(self):
         lines = self.getFileManager().read("camper.txt")
+
         print("\nFilter Campers by:")
         print("1. Parent ID")
         print("2. Age")
@@ -80,11 +99,26 @@ class Administrator(User):
 
         if c == "1":
             pid = input("Parent ID: ").strip()
+
+            #Validate parent ID exists
+            if not any(pid == l.split(":")[3] for l in lines):
+                print("❌ No campers found for that Parent ID.")
+                return
+
             data = [l for l in lines if pid == l.split(":")[3]]
             action = f"Generated Camper Report (parentID={pid})"
 
         elif c == "2":
             age = input("Age: ").strip()
+
+            if not age.isdigit():
+                print("❌ Age must be a number.")
+                return
+
+            if not any(age == l.split(":")[1] for l in lines):
+                print("❌ No campers found with that age.")
+                return
+
             data = [l for l in lines if age == l.split(":")[1]]
             action = f"Generated Camper Report (age={age})"
 
@@ -157,4 +191,4 @@ class Administrator(User):
         print("5. Logout")
     
     def logAction(self, action: str):
-        self.fileManager.logAction(self.id, self.name, action)
+        self.getFileManager().logAction(self.getID(), self.getName(), action)

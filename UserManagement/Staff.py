@@ -19,5 +19,4 @@ class Staff(User):
         print("1. View Camper Info")
         print("2. Log Attendance for Assigned Sessions")
         print("3. View Attendance Records")
-        print("4. Register a Camper")
-        print("5. Logout")
+        print("4. Logout")

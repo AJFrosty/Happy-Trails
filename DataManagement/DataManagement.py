@@ -1,17 +1,27 @@
 import os
 import threading
 import datetime
+import shutil
 
 class DataManagement:
-    def __init__(self, baseDirectory="Data/"):
+    def __init__(self, baseDirectory="Data/", backUpFolder="Data-Bak/", reportsFolder = "Reports/"):
+        self.data_files = [
+            "camper.txt",
+            "log.txt",
+            "session.txt",
+            "summary.txt",
+            "users.txt"
+        ]
         self.baseDirectory = baseDirectory
+        self.backUpFolder = backUpFolder
+        self.reportsFolder = reportsFolder
         self.lock = threading.Lock()
         self.ensureDirectory()
     
     def logAction(self, id, name, action: str):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         record = f"{id}:{name}:{action}:{timestamp}\n"
-        success = self.write("session.txt", record, append=True)
+        success = self.write("log.txt", record, append=True)
         if not success:
             print("⚠️ Failed to log session.")
 
@@ -19,6 +29,14 @@ class DataManagement:
         if not os.path.exists(self.baseDirectory):
             os.makedirs(self.baseDirectory)
             print(f"📁 Created base directory: {self.baseDirectory}")
+        
+        if not os.path.exists(self.backUpFolder):
+            os.makedirs(self.backUpFolder)
+            print(f"📁 Created backUp directory: {self.baseDirectory}")
+        
+        if not os.path.exists(self.reportsFolder):
+            os.makedirs(self.reportsFolder)
+            print(f"📁 Created reports directory: {self.reportsFolder}")
 
     def getFilePath(self, filename):
         return os.path.join(self.baseDirectory, filename)
@@ -154,3 +172,24 @@ class DataManagement:
                 results.append(line)
 
         return results
+    
+    def backupAll(self):
+        print("\n📁 Starting backup process...")
+
+        for filename in self.data_files:
+            source_path = os.path.join(self.baseDirectory, filename)
+            backup_name = filename.replace(".txt", ".bak.txt")
+            backup_path = os.path.join(self.backUpFolder, backup_name)
+
+            if not os.path.exists(source_path):
+                print(f"⚠️ Skipped missing file: {filename}")
+                continue
+
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+
+            shutil.copyfile(source_path, backup_path)
+
+            print(f"✅ Backed up {filename} → {backup_name}")
+
+        print("🎉 Backup completed successfully.\n")

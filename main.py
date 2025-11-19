@@ -23,9 +23,9 @@ def main():
                 elif choice == "2":
                     print("Edit/Delete Users (feature to implement)")
                 elif choice == "3":
-                    print("Generate Reports (feature to implement)")
+                    currentUser.generateReports()
                 elif choice == "4":
-                    print("Backup/Restore Data (feature to implement)")
+                    fileManager.backupAll()
                 elif choice == "5":
                     print("Logging out...")
                     currentUser = None
@@ -52,6 +52,7 @@ def main():
                 if choice == "1":
                     currentUser.registerCamper()
                 elif choice == "2":
+                    currentUser.updateCamper()
                     print("Update Camper Info (feature to implement)")
                 elif choice == "3":
                     print("Enroll Camper in Session (feature to implement)")
