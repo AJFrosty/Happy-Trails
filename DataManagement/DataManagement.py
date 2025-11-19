@@ -103,3 +103,54 @@ class DataManagement:
         print(f"📄 Report generated: {reportName}")
 
         return reportName
+    
+    def filterCampers(
+        self,
+        camper_id=None,
+        parent_id=None,
+        admin_id=None,
+        staff_id=None,
+        name=None,
+        min_age=None,
+        max_age=None,
+        eligible_only=False,
+        logic="AND"
+    ):
+        records = self.read("camper.txt")
+        results = []
+
+        for line in records:
+            parts = line.split(":")
+            if len(parts) < 5:
+                continue
+
+            c_id, c_name, c_age, c_parent, c_med = parts
+            c_age = int(c_age)
+
+            checks = []
+
+            if camper_id:
+                checks.append(c_id == camper_id)
+
+            if parent_id:
+                checks.append(c_parent == parent_id)
+
+            if name:
+                checks.append(name.lower() in c_name.lower())
+
+            if min_age is not None:
+                checks.append(c_age >= min_age)
+
+            if max_age is not None:
+                checks.append(c_age <= max_age)
+
+            if eligible_only:
+                checks.append(6 <= c_age <= 17)
+
+            #Apply logic
+            if logic == "AND" and all(checks):
+                results.append(line)
+            elif logic == "OR" and any(checks):
+                results.append(line)
+
+        return results

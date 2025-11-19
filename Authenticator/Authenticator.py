@@ -13,7 +13,6 @@ class Authenticator:
         self.fileManager = fileManager
 
     def hashPassword(self, password: str) -> str:
-        """Return SHA-256 hash of a password."""
         return hashlib.sha256(password.encode()).hexdigest()
 
     def logAction(self, action: str):
