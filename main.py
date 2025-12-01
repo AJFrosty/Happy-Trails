@@ -77,9 +77,9 @@ def main():
                 if choice == "1":
                     currentUser.viewCamperInfo()
                 elif choice == "2":
-                    currentUser.recordAttendance()
+                    print("To be implemented in Release 2")
                 elif choice == "3":
-                    currentUser.viewAttendanceLogs()
+                    print("To be implemented in Release 2")
                 elif choice == "4":
                     currentUser.register()
                 elif choice == "5":
