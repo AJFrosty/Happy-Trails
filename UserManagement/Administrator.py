@@ -184,7 +184,8 @@ class Administrator(User):
         self.logAction(action)
 
     def deleteUserByID(self):
-        lines = self.__fileManager.read("users.txt")
+        fileManager = self.getFileManager()
+        lines = fileManager.read("users.txt")
 
         print("\nDelete User Account")
         uid = input("Enter User ID to delete: ").strip()
@@ -210,7 +211,7 @@ class Administrator(User):
             print("User ID not found.")
             return
 
-        print(f"\nFound User: {deleted_user}")
+        print(f"\nFound User: {deleted_user.split(":")[2]}")
         confirm = input("Are you SURE you want to delete this user? (y/n): ").lower()
 
         if confirm != "y":
@@ -218,13 +219,14 @@ class Administrator(User):
             return
 
         #Write updated list back
-        self.__fileManager.write("users.txt", updated, overwrite=True)
+        fileManager.write("users.txt", updated,False)
 
         print("User deleted successfully.")
         self.logAction(f"Deleted user with ID {uid}")
 
     def editUser(self):
-        lines = self.__fileManager.read("users.txt")
+        fileManager = self.getFileManager()
+        lines = fileManager.read("users.txt")
 
         print("\nEdit User Account")
         uid = input("Enter User ID to edit: ").strip()
@@ -247,7 +249,7 @@ class Administrator(User):
             print("❌ User ID not found.")
             return
 
-        userID, username, password, role = target_line
+        userID, role, username, password = target_line
 
         print(f"\nCurrent Info:")
         print(f"Username: {username}")
@@ -272,18 +274,38 @@ class Administrator(User):
                 print("❌ Username cannot be empty.")
                 return
             username = newUsername
-            action = f"Edited Username (ID={uid})"
+            self.logAction(f"Edited Username (ID={uid})")
 
         #Edit password
         elif choice == "2":
-            newPassword = input("Enter new password: ").strip()
-            if not newPassword:
-                print("❌ Password cannot be empty.")
-                return
-            password = newPassword
-            action = f"Edited Password (ID={uid})"
+            while True:
+                    new_pass = input("Enter new password: ").strip()
+                    confirm = input("Confirm password: ").strip()
 
-        # dit role
+                    if new_pass != confirm:
+                        print("❌ Passwords do not match.")
+                        continue
+
+                    # Password validation
+                    if len(new_pass) < 8:
+                        print("❌ Password must be at least 8 characters.")
+                        continue
+                    if not any(c.isdigit() for c in new_pass):
+                        print("❌ Password must include at least one number.")
+                        continue
+                    if not any(c.isupper() for c in new_pass):
+                        print("❌ Password must include an uppercase letter.")
+                        continue
+                    if not any(c.islower() for c in new_pass):
+                        print("❌ Password must include a lowercase letter.")
+                        continue
+
+                    #Hash password
+                    password = self.encryptPassword(new_pass)
+                    self.logAction(f"Changed password for user {userID}")
+                    break
+
+        #edit role
         elif choice == "3":
             if editing_self:
                 print("❌ You cannot change your own role.")
@@ -296,22 +318,41 @@ class Administrator(User):
                 print("❌ Invalid role.")
                 return
 
-            role = newRole
-            action = f"Edited Role (ID={uid})"
+            #Generate NEW ID based on new role
+            if newRole == "Staff":
+                prefix = "STF_"
+            elif newRole == "Parent":
+                prefix = "PRT_"
 
-        else:
-            print("❌ Invalid choice.")
-            return
+            #Auto-increment ID number based on existing IDs
+            existing = self.getFileManager().read("users.txt")
+            next_num = 0
+
+            for line in existing:
+                parts = line.split(":")
+                if parts[0].startswith(prefix):
+                    num = int(parts[0].split("_")[1])
+                    if num >= next_num:
+                        next_num = num + 1
+
+            newID = f"{prefix}{next_num}"
+
+            print(f"Changing role. Old ID={uid}, New ID={newID}")
+
+        #Update role + ID in memory
+        userID = newID
+        role = newRole
+
+        self.logAction(f"Changed role for user → NewRole={role}, NewID={uid}")
 
         #Rebuild updated line
-        newLine = f"{userID}:{username}:{password}:{role}\n"
+        newLine = f"{userID}:{role}:{username}:{password}\n"
         updated.append(newLine)
 
         #Save file
-        self.__fileManager.write("users.txt", updated, overwrite=True)
+        fileManager.write("users.txt", updated, False)
 
         print("User updated successfully.")
-        self.logAction(action)
 
     def showDashboard(self):
         print("\n--- ADMIN DASHBOARD ---")

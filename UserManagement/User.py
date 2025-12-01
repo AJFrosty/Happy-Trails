@@ -66,7 +66,7 @@ class User:
 
         if success:
             print(f"✅ {roleToCreate} '{username}' created successfully with ID {newId}.")
-            self.__fileManager.logAction(f"Registered camper '{username}'")      
+            self.logAction(f"Registered {roleToCreate} '{username}'")      
         else:
             print("❌ Failed to create user. Check file permissions.")
 

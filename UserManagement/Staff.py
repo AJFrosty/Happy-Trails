@@ -16,8 +16,8 @@ class Staff(User):
         return False
 
     def recordAttendance(self):
-
-        campers = self.__fileManager.read("camper.txt")
+        fileManager = self.getFileManager()
+        campers = fileManager.read("camper.txt")
         if not campers:
             print("❌ No campers found.")
             return
@@ -53,10 +53,10 @@ class Staff(User):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
         record = f"{camper_id}:{camper_name}:{status_text}:{timestamp}\n"
-        self.__fileManager.write("attendance.txt", record, append=True)
+        fileManager.write("attendance.txt", record, append=True)
 
         print("✔ Attendance recorded successfully!")
-        self.__fileManager.logAction(f"Recorded attendance for {camper_id} ({status_text})")
+        fileManager.logAction(f"Recorded attendance for {camper_id} ({status_text})")
 
     def viewAttendanceLogs(self):
         fileManager = self.getFileManager()
