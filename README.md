@@ -1,10 +1,3 @@
-Below is a **clean, user-friendly Markdown User Guide** for **Happy Trails** based on your dashboards, menus, and system structure.
-
-You can place this in a file like:
-📄 **User_Guide_Happy_Trails.md**
-
----
-
 # 🏕️ **Happy Trails Summer Camp Registration System**
 
 ### **User Guide (Console Version)**
