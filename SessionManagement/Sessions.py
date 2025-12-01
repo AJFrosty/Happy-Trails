@@ -269,3 +269,81 @@ class SessionManager:
                 return False
 
         return True
+
+    def findCamperByID(self, camper_id: str):
+        lines = self.fileManager.read("camper.txt")
+        if not lines:
+            return None
+
+        for line in lines:
+            parts = line.strip().split(":")
+            if len(parts) < 3:
+                continue
+            if parts[0].upper() == camper_id.upper():
+                return {
+                    "id": parts[0],
+                    "name": parts[1],
+                    "age": int(parts[2])
+                }
+
+        return None
+    
+    def enrollCamper(self, camper_id: str, session_id: str, user: User):
+        #Validate permissions — parents can only enroll their children
+        if user.getRole().lower() == "parent":
+            camper = self.findCamperByID(camper_id)
+            if not camper or camper["id"] not in str(self.fileManager.read("camper.txt")):
+                print("❌ You can only enroll your own children.")
+                return False
+
+        #1. Check camper exists
+        camper = self.findCamperByID(camper_id)
+        if not camper:
+            print("❌ Camper not found.")
+            return False
+
+        #2. Check session exists
+        sid = session_id.upper()
+        if sid not in self.sessions:
+            print("❌ Session ID does not exist.")
+            return False
+
+        session = self.sessions[sid]
+
+        #3. Age eligibility
+        age = camper["age"]
+        if age < session.min_age or age > session.max_age:
+            print(f"❌ Camper age {age} does not meet session requirement ({session.min_age}-{session.max_age}).")
+            return False
+
+        #4. Capacity check
+        if session.spots_available <= 0:
+            print("❌ Session is already full.")
+            return False
+
+        #5. Prevent duplicate enrollment
+        enrollments = self.fileManager.read("session_enrollments.txt")
+        if enrollments:
+            for line in enrollments:
+                parts = line.strip().split(":")
+                if len(parts) >= 2 and parts[0] == sid and parts[1] == camper_id:
+                    print("⚠️ Camper is already enrolled in this session.")
+                    return False
+
+        #6. Write enrollment record
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+        record = f"{sid}:{camper_id}:{camper['name']}:{timestamp}\n"
+        self.fileManager.write("session_enrollments.txt", record, append=True)
+
+        #7. Update spots & save sessions
+        session.spots_available -= 1
+        self.saveSessions()
+
+        print(f"✅ {camper['name']} successfully enrolled in {session.name} ({sid}).")
+        return True
+    
+    def enrollCamperInteractive(self, user: User):
+        print("\n=== Enroll Camper into a Session ===")
+        camper_id = input("Enter Camper ID: ").strip().upper()
+        session_id = input("Enter Session ID: ").strip().upper()
+        self.enrollCamper(camper_id, session_id, user)

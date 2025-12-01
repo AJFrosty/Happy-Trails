@@ -56,14 +56,14 @@ def main():
                             SessMgmr.displaySessions()
 
                         elif choice == "5":
-                            SessMgmr.addCamperToSessionInteractive()
+                            SessMgmr.enrollCamperInteractive(currentUser)
 
                         elif choice == "6":
                             print("⬅ Returning to Admin Menu...")
-                            return
+                            break
                         else:
                             print("Invalid option. Please try again.")
-                            
+
                 elif choice == "7":
                     currentUser.viewCamperInfo()
                 elif choice == "8":
@@ -105,4 +105,8 @@ def main():
                 print("Unknown role. Exiting.")
                 break
 
+print("=================================================================")
+print("\t\tWELCOME TO HAPPY TRAILS SUMMER CAMP")
+print("=================================================================")
+print()
 main()

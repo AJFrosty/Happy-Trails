@@ -94,9 +94,9 @@ class Parent(User):
 
         while True:
             try:
-                age = int(input("Enter Age (5-19): ").strip())
-                if age < 5 or age > 19:
-                    print("❌ Age must be between 5 and 19.")
+                age = int(input("Enter Age (5-17): ").strip())
+                if age < 6 or age > 17:
+                    print("❌ Age must be between 6 and 17.")
                 else:
                     break
             except ValueError:
