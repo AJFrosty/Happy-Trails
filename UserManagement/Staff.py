@@ -77,7 +77,6 @@ class Staff(User):
 
         self.logAction("Viewed attendance logs")
 
-
     def showDashboard(self):
         print("\n--- STAFF DASHBOARD ---")
         print("1. View Camper Info")

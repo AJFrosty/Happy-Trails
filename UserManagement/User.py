@@ -142,7 +142,7 @@ class User:
             for c in found:
                 display(c)
 
-            self.__fileManager.logAction(f"Viewed camper by ID ({cid})")
+            self.logAction(f"Viewed camper by ID ({cid})")
             return
 
         #Search by name/partial name
