@@ -196,6 +196,41 @@ class SessionManager:
         for s in self.sessions.values():
             print(f"{s.session_id} | {s.name} | {s.activity_type} | {s.start_date}→{s.end_date} | "
                   f"Ages {s.min_age}-{s.max_age} | {s.spots_available}/{s.capacity} spots | Instructor: {s.instructor}")
+            
+    def addCamperToSession(self, session_id: str, camper_age: int):
+        sid = session_id.strip().upper()
+
+        if sid not in self.sessions:
+            print("Session not found.")
+            return False
+
+        s = self.sessions[sid]
+
+        if s.spots_available <= 0:
+            print("Session is full.")
+            return False
+
+        if camper_age < s.min_age or camper_age > s.max_age:
+            print(f"Camper age {camper_age} does not fit session age range {s.min_age}-{s.max_age}.")
+            return False
+
+        s.spots_available -= 1
+        self.saveSessions()
+
+        print(f"Camper added to session {sid}. Spots remaining: {s.spots_available}.")
+        return True
+
+    def addCamperToSessionInteractive(self):
+        self.displaySessions()
+        sid = input("\nEnter Session ID to add camper to: ").strip().upper()
+        ageStr = input("Camper age: ").strip()
+
+        if not ageStr.isdigit():
+            print("Age must be numeric.")
+            return
+
+        camper_age = int(ageStr)
+        self.addCamperToSession(sid, camper_age)
 
     def validateSessionDetails(self, name: str, activity: str, start: str, end: str, min_age: int, max_age: int, instructor: str, capacity: int):
         if not name or not activity or not instructor:

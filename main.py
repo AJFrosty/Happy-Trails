@@ -21,12 +21,18 @@ def main():
                 if choice == "1":
                     currentUser.register()
                 elif choice == "2":
-                    print("Edit/Delete Users (feature to implement)")
+                    currentUser.deleteUserByID()
                 elif choice == "3":
-                    currentUser.generateReports()
+                    currentUser.editUser()
                 elif choice == "4":
-                    fileManager.backupAll()
+                    currentUser.generateReports()
                 elif choice == "5":
+                    fileManager.backupAll()
+                elif choice == "6":
+                    print("Session Management Dashboard(Create/Edit/Delete)")
+                elif choice == "7":
+                    currentUser.viewCamperInfo()
+                elif choice == "8":
                     print("Logging out...")
                     currentUser = None
                     break
@@ -35,6 +41,7 @@ def main():
             
             elif currentUser.getRole() == "Staff":
                 if choice == "1":
+                    currentUser.viewCamperInfo()
                     print("View Camper Info (feature to implement)")
                 elif choice == "2":
                     print("Record Attendance (feature to implement)")
@@ -53,9 +60,8 @@ def main():
                     currentUser.registerCamper()
                 elif choice == "2":
                     currentUser.updateCamper()
-                    print("Update Camper Info (feature to implement)")
                 elif choice == "3":
-                    print("Enroll Camper in Session (feature to implement)")
+                    currentUser.enrollCamperInSession()
                 elif choice == "4":
                     print("Logging out...")
                     break

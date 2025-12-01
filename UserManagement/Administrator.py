@@ -14,6 +14,7 @@ class Administrator(User):
     def canDelete(self, targetRole: str) -> bool:
         return True
 
+
      #REPORTS
     def generateReports(self):
         print("\n=== REPORT GENERATION ===")
@@ -182,13 +183,146 @@ class Administrator(User):
         self.getFileManager().createReport("log.txt", data)
         self.logAction(action)
 
+    def deleteUserByID(self):
+        lines = self.__fileManager.read("users.txt")
+
+        print("\nDelete User Account")
+        uid = input("Enter User ID to delete: ").strip()
+
+        if uid == self.getID():
+            print("You cannot delete your own admin account.")
+            return
+
+        updated = []
+        deleted_user = None
+
+        #Find the user by ID
+        for line in lines:
+            parts = line.split(":")
+            userID = parts[0]
+
+            if userID == uid:
+                deleted_user = line
+            else:
+                updated.append(line)
+
+        if not deleted_user:
+            print("User ID not found.")
+            return
+
+        print(f"\nFound User: {deleted_user}")
+        confirm = input("Are you SURE you want to delete this user? (y/n): ").lower()
+
+        if confirm != "y":
+            print("Deletion cancelled.")
+            return
+
+        #Write updated list back
+        self.__fileManager.write("users.txt", updated, overwrite=True)
+
+        print("User deleted successfully.")
+        self.logAction(f"Deleted user with ID {uid}")
+
+    def editUser(self):
+        lines = self.__fileManager.read("users.txt")
+
+        print("\nEdit User Account")
+        uid = input("Enter User ID to edit: ").strip()
+
+        #Validation: cannot change your own role
+        editing_self = (uid == self.getID())
+
+        target_line = None
+        updated = []
+
+        #Find target user
+        for line in lines:
+            parts = line.strip().split(":")
+            if parts[0] == uid:
+                target_line = parts
+            else:
+                updated.append(line)
+
+        if not target_line:
+            print("❌ User ID not found.")
+            return
+
+        userID, username, password, role = target_line
+
+        print(f"\nCurrent Info:")
+        print(f"Username: {username}")
+        print(f"Role: {role}")
+
+        print("\nWhat would you like to edit?")
+        print("1. Username")
+        print("2. Password")
+        print("3. Role")
+        print("4. Cancel")
+
+        choice = input("Option: ").strip()
+
+        if choice == "4":
+            print("Edit cancelled.")
+            return
+
+        #Edit username
+        if choice == "1":
+            newUsername = input("Enter new username: ").strip()
+            if not newUsername:
+                print("❌ Username cannot be empty.")
+                return
+            username = newUsername
+            action = f"Edited Username (ID={uid})"
+
+        #Edit password
+        elif choice == "2":
+            newPassword = input("Enter new password: ").strip()
+            if not newPassword:
+                print("❌ Password cannot be empty.")
+                return
+            password = newPassword
+            action = f"Edited Password (ID={uid})"
+
+        # dit role
+        elif choice == "3":
+            if editing_self:
+                print("❌ You cannot change your own role.")
+                return
+
+            print("\nAvailable Roles: Staff / Parent")
+            newRole = input("Enter new role: ").strip()
+
+            if newRole not in ["Staff", "Parent"]:
+                print("❌ Invalid role.")
+                return
+
+            role = newRole
+            action = f"Edited Role (ID={uid})"
+
+        else:
+            print("❌ Invalid choice.")
+            return
+
+        #Rebuild updated line
+        newLine = f"{userID}:{username}:{password}:{role}\n"
+        updated.append(newLine)
+
+        #Save file
+        self.__fileManager.write("users.txt", updated, overwrite=True)
+
+        print("User updated successfully.")
+        self.logAction(action)
+
     def showDashboard(self):
         print("\n--- ADMIN DASHBOARD ---")
-        print("1. Create Staff Account")
-        print("2. Edit/Delete User")
-        print("3. Generate Reports")
-        print("4. Backup/Restore Data")
-        print("5. Logout")
+        print("1. Register an Account")
+        print("2. Delete A User")
+        print("3. Edit A User")
+        print("4. Generate Reports")
+        print("5. Backup/Restore Data")
+        print("6. Session Management Dashboard")
+        print("7. View Camper Info")
+        print("8. Logout")
     
     def logAction(self, action: str):
         self.getFileManager().logAction(self.getID(), self.getName(), action)

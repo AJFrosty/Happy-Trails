@@ -188,7 +188,83 @@ class Parent(User):
         fm.logAction(self.getID(), self.getUsername(), f"Updated camper {camper_id}")
 
         print("✅ Camper updated successfully.")
-        
+
+    def enrollCamperInSession(self):
+        if not self.isAuthenticated():
+            print("You must be logged in.")
+            return
+
+        fm = self.getFileManager()
+        campers = fm.read("camper.txt")
+
+        print("\n--- Your Campers ---")
+        parentCampers = []
+        for line in campers:
+            parts = line.split(":")
+            if len(parts) >= 6 and parts[4] == self.getID():
+                parentCampers.append(parts)
+
+        if not parentCampers:
+            print("You have no registered campers.")
+            return
+
+        for i, c in enumerate(parentCampers, start=1):
+            print(f"{i}. {c[0]} - {c[1]} (Age {c[2]})")
+
+        try:
+            selection = int(input("Select a camper by number: ").strip())
+            if selection < 1 or selection > len(parentCampers):
+                print("Invalid selection.")
+                return
+        except:
+            print("Invalid selection.")
+            return
+
+        target = parentCampers[selection - 1]
+        camper_id = target[0]
+
+        print(f"Selected Camper ID: {camper_id}")
+        print("Please make note of this ID.")
+
+        sessions = fm.read("session.txt")
+        if not sessions:
+            print("No sessions available.")
+            return
+
+        print("\n--- Available Sessions ---")
+        session_list = []
+        for line in sessions:
+            parts = line.split(":")
+            if len(parts) >= 3:
+                session_list.append(parts)
+
+        for i, s in enumerate(session_list, start=1):
+            print(f"{i}. {s[0]} - {s[1]} ({s[2]})")
+
+        try:
+            selection = int(input("Select a session by number: ").strip())
+            if selection < 1 or selection > len(session_list):
+                print("Invalid session.")
+                return
+        except:
+            print("Invalid session.")
+            return
+
+        chosen_session = session_list[selection - 1]
+        session_id = chosen_session[0]
+
+        summary = fm.read("summary.txt")
+        for line in summary:
+            parts = line.split(":")
+            if len(parts) >= 3 and parts[0] == camper_id and parts[1] == session_id:
+                print("Camper is already enrolled in this session.")
+                return
+
+        record = f"{camper_id}:{session_id}:{self.getID()}\n"
+        fm.write("summary.txt", record, append=True)
+
+        print(f"Camper {target[1]} successfully enrolled in session {session_id}.")
+             
     def showDashboard(self):
         print("\n--- PARENT DASHBOARD ---")
         print("1. Register New Camper")
