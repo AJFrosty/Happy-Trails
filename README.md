@@ -144,7 +144,6 @@ Admins have **full system privileges**.
 
 Admins can create:
 
-* Admin
 * Staff
 * Parent
 
@@ -293,7 +292,7 @@ CMP0004, Sarah Jones, Present, 2025-01-14 09:30
 
 ---
 
-## **5.3 View Attendance Records**
+## **5.3 View Attendance Records (Release #2 Feature)**
 
 Lists all entries in attendance.txt.
 
@@ -331,4 +330,11 @@ Ends staff session.
 | summary.txt    | Data summary export |
 | Data-Bak/      | Backups directory   |
 
+If you'd like to change your file directory. pass the directory in the FileManager object on line 6 of ``main.py``.
+```bash
+def main():
+    while True:
+        fileManager = DataManagement('INSERT DIRECTORY PATH')
+    ...(more code)
+```
 ---
