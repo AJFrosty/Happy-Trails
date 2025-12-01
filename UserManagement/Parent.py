@@ -145,7 +145,7 @@ class Parent(User):
         found = None
         for line in campers:
             parts = line.split(":")
-            if len(parts) >= 5 and parts[3] == self.getID() and parts[0] == camper_id:
+            if len(parts) >= 5 and parts[4] == self.getID() and parts[0] == camper_id:
                 found = parts
                 break
 
@@ -153,13 +153,13 @@ class Parent(User):
             print("❌ Camper not found or you do not have permission to update this camper.")
             return
 
-        old_name, old_age, old_dob, parent_id, old_medical = found
+        old_id, old_name, old_age, old_dob, parent_id, old_medical = found
 
         print("\n--- Leave field empty to keep current value ---")
         new_name = input(f"Name ({old_name}): ").strip() or old_name
         new_medical = input(f"Medical Info ({old_medical}): ").strip() or old_medical
 
-        # Eligibility Check (6–17)
+        #Eligibility Check (6–17)
         while True:
             new_age_input = input(f"Age ({old_age}): ").strip()
             if new_age_input == "":
@@ -173,7 +173,7 @@ class Parent(User):
             except:
                 print("❌ Invalid age.")
 
-        # Rewrite file
+        #Rewrite file
         new_lines = []
         for line in campers:
             parts = line.split(":")
@@ -185,9 +185,9 @@ class Parent(User):
 
         fm.write("camper.txt", new_lines, append=False)
 
-        self.logAction(self.getID(), self.getUsername(), f"Updated camper {camper_id}")
+        self.logAction(f"Updated camper {camper_id}")
 
-        print("✅ Camper updated successfully.")
+        print("Camper updated successfully.")
 
     def enrollCamperInSession(self):
         if not self.isAuthenticated():
