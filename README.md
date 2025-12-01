@@ -334,7 +334,7 @@ If you'd like to change your file directory. pass the directory in the FileManag
 ```bash
 def main():
     while True:
-        fileManager = DataManagement('INSERT DIRECTORY PATH')
+        fileManager = DataManagement('INSERT DIRECTORY PATH MAIN', 'INSERT DIRECTORY PATH BACKUPS', "INSERT DIRECTORY PATHS REPORTS")
     ...(more code)
 ```
 ---
