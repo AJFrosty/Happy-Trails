@@ -324,5 +324,3 @@ class Administrator(User):
         print("7. View Camper Info")
         print("8. Logout")
     
-    def logAction(self, action: str):
-        self.getFileManager().logAction(self.getID(), self.getName(), action)

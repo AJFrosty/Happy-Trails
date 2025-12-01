@@ -185,7 +185,7 @@ class Parent(User):
 
         fm.write("camper.txt", new_lines, append=False)
 
-        fm.logAction(self.getID(), self.getUsername(), f"Updated camper {camper_id}")
+        self.logAction(self.getID(), self.getUsername(), f"Updated camper {camper_id}")
 
         print("✅ Camper updated successfully.")
 

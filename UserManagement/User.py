@@ -188,4 +188,8 @@ class User:
     def getFileManager(self): return self.__fileManager
     def isAuthenticated(self): return self.__authenticated
     
+    #LOGS FOR USERS
+    def logAction(self, action: str):
+        self.getFileManager().logAction(self.getID(), self.getName(), action)
+    #Attendance
     

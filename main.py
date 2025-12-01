@@ -42,11 +42,10 @@ def main():
             elif currentUser.getRole() == "Staff":
                 if choice == "1":
                     currentUser.viewCamperInfo()
-                    print("View Camper Info (feature to implement)")
                 elif choice == "2":
-                    print("Record Attendance (feature to implement)")
+                    currentUser.recordAttendance()
                 elif choice == "3":
-                    print("View Attendance Logs (feature to implement)")
+                    currentUser.viewAttendanceLogs()
                 elif choice == "4":
                     currentUser.register()
                 elif choice == "5":
